@@ -9,53 +9,151 @@
 
 <style>
 :root {
-  --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--muted:#94a3b8;
-  --line:#243043;--accent:#b8860b;--accent2:#ffd65a;
-  --radius:14px;--shadow:0 6px 16px rgba(0,0,0,.35);
+  --bg:#0b0f19;
+  --card:#151d2f;
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --line:#243043;
+  --accent:#b8860b;
+  --accent2:#ffd65a;
+  --radius:14px;
+  --shadow:0 6px 16px rgba(0,0,0,.35);
 }
-body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
-header{
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+}
+header {
   background:linear-gradient(135deg,#b8860b,#d4af37);
-  color:#fff;text-align:center;padding:2rem 1rem;
-  font-size:1.8rem;font-weight:700;box-shadow:var(--shadow);
+  color:#fff;
+  text-align:center;
+  padding:2rem 1rem;
+  font-size:1.8rem;
+  font-weight:700;
+  box-shadow:var(--shadow);
+  letter-spacing:.3px;
 }
-main{
-  max-width:700px;margin:2rem auto;background:var(--card);
-  padding:2rem;border-radius:var(--radius);box-shadow:var(--shadow);
+main {
+  max-width:700px;
+  margin:2rem auto;
+  background:var(--card);
+  padding:2rem;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  animation:fadeIn .6s ease;
 }
-h2{text-align:center;color:var(--accent2);margin-top:0;}
-label{display:block;margin-top:1rem;font-weight:600;}
-input,select,textarea{
-  width:100%;padding:.9rem;margin-top:.3rem;font-size:1rem;
-  border:1px solid var(--line);border-radius:var(--radius);
-  background:#0f1629;color:var(--text);
+h2 {
+  text-align:center;
+  color:var(--accent2);
+  margin-top:0;
 }
-button{
-  width:100%;padding:1rem;margin-top:1.2rem;
-  border:none;border-radius:var(--radius);
-  font-weight:600;cursor:pointer;font-size:1rem;
-  transition:.2s;letter-spacing:.3px;
+label {display:block;margin-top:1rem;font-weight:600;}
+input,select,textarea {
+  width:100%;
+  padding:.9rem;
+  margin-top:.3rem;
+  font-size:1rem;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:#0f1629;
+  color:var(--text);
 }
-#enviar{background:var(--accent);color:#fff;}
-#enviar:hover{background:var(--accent2);color:#000;}
-#abrirPopup{background:#2d364b;color:#fff;}
-#abrirPopup:hover{background:#384763;}
-#msg{text-align:center;margin-top:1rem;font-weight:600;color:var(--accent2);}
-.progress-container{margin-top:1.2rem;background:#2d364b;border-radius:10px;height:14px;width:100%;}
-.progress-bar{height:14px;width:0;background:linear-gradient(90deg,#b8860b,#ffd65a);transition:width .3s;}
-.progress-text{text-align:center;font-size:.9rem;color:var(--muted);margin-top:.4rem;}
-#popupOverlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.6);
-  display:none;align-items:center;justify-content:center;z-index:1000;
+input:focus,select:focus,textarea:focus {
+  border-color:var(--accent2);
+  outline:none;
+  box-shadow:0 0 0 2px rgba(255,214,90,.15);
 }
-#popup{
-  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-  width:90%;max-width:500px;padding:2rem;position:relative;
+button {
+  width:100%;
+  padding:1rem;
+  margin-top:1.2rem;
+  border:none;
+  border-radius:var(--radius);
+  font-weight:600;
+  cursor:pointer;
+  font-size:1rem;
+  transition:.2s;
+  letter-spacing:.3px;
 }
-#popup h3{text-align:center;color:var(--accent2);}
-#popup button.close{
-  position:absolute;top:10px;right:15px;background:none;border:none;
-  font-size:1.6rem;cursor:pointer;color:var(--muted);
+#enviar {
+  background:var(--accent);
+  color:#fff;
+  box-shadow:inset 0 0 0 0 var(--accent2);
+}
+#enviar:hover {
+  box-shadow:inset 400px 0 0 0 var(--accent2);
+  color:#000;
+}
+#abrirPopup {background:#2d364b;color:#fff;}
+#abrirPopup:hover {background:#384763;}
+#msg {
+  text-align:center;
+  margin-top:1rem;
+  font-weight:600;
+  color:var(--accent2);
+}
+.progress-container {
+  margin-top:1.2rem;
+  background:#2d364b;
+  border-radius:10px;
+  height:14px;
+  width:100%;
+  overflow:hidden;
+}
+.progress-bar {
+  height:14px;
+  width:0;
+  background:linear-gradient(90deg,#b8860b,#ffd65a);
+  transition:width .3s ease;
+}
+.progress-text {
+  text-align:center;
+  font-size:.9rem;
+  color:var(--muted);
+  margin-top:.4rem;
+}
+#popupOverlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+#popup {
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  width:90%;
+  max-width:500px;
+  padding:2rem;
+  position:relative;
+  animation:fadeIn .4s ease;
+}
+#popup h3 {
+  text-align:center;
+  color:var(--accent2);
+}
+#popup button.close {
+  position:absolute;
+  top:10px;
+  right:15px;
+  background:none;
+  border:none;
+  font-size:1.6rem;
+  cursor:pointer;
+  color:var(--muted);
+}
+@keyframes fadeIn {
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@media(max-width:600px){
+  main{margin:1rem;padding:1.5rem;}
+  header{font-size:1.5rem;}
 }
 </style>
 </head>
@@ -83,11 +181,9 @@ button{
     </select>
 
     <label>Anexar currículo (PDF, DOC ou DOCX)</label>
-    <input type="file" id="arquivo" accept=".pdf,.doc,.docx">
+    <input type="file" name="arquivo" id="arquivo" accept=".pdf,.doc,.docx" required>
 
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
     <div class="progress-text" id="progressText"></div>
 
     <p style="text-align:center;margin-top:1.2rem;color:var(--muted)">— ou —</p>
@@ -105,21 +201,22 @@ button{
     <h3>📝 Criar Currículo Básico</h3>
 
     <label>Resumo Profissional</label>
-    <textarea id="cvResumo" rows="4"></textarea>
+    <textarea id="cvResumo" rows="4" placeholder="Fale brevemente sobre suas habilidades e experiências."></textarea>
 
     <label>Experiências Profissionais</label>
-    <textarea id="cvExp" rows="4"></textarea>
+    <textarea id="cvExp" rows="4" placeholder="Liste suas experiências anteriores."></textarea>
 
     <label>Formação e Cursos</label>
-    <textarea id="cvForm" rows="3"></textarea>
+    <textarea id="cvForm" rows="3" placeholder="Informe sua formação acadêmica e cursos."></textarea>
 
     <button id="gerarPDF">Gerar e baixar PDF</button>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxH6A-L6A8a9T1fu1W9tbXRMpQFT2gNdciqZRD-cabwlsHXuWeuSXJuVgaS0-epTVgW/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzaiHfgr3_t3w24ypURzZjIrD4XtAvsrx_d-A54YoCjzNWsamIuisIUYpDVujNKMo3F/exec';
 
+// Converte arquivo para Base64
 const toBase64 = file => new Promise((resolve,reject)=>{
   const reader = new FileReader();
   reader.readAsDataURL(file);
@@ -132,50 +229,83 @@ document.getElementById('form-cv').addEventListener('submit', async e=>{
   const msg = document.getElementById('msg');
   const bar = document.getElementById('progressBar');
   const txt = document.getElementById('progressText');
-  msg.textContent = 'Convertendo arquivo...';
-  bar.style.width = '10%';
+  msg.textContent = '';
+  bar.style.width = '0%';
 
   const nome = e.target.nome.value.trim();
   const idade = e.target.idade.value.trim();
   const area = e.target.area.value.trim();
   const fileInput = document.getElementById('arquivo');
-  const conteudo = '';
 
-  let fileData = '';
-  let fileName = '';
-  if(fileInput.files.length > 0){
-    const file = fileInput.files[0];
-    fileData = await toBase64(file);
-    fileName = file.name;
+  if(fileInput.files.length === 0){
+    msg.textContent = 'Selecione um arquivo.';
+    return;
   }
 
-  msg.textContent = 'Enviando...';
-  bar.style.width = '40%';
+  const file = fileInput.files[0];
+  const fileData = await toBase64(file);
+
   txt.textContent = 'Enviando dados...';
+  bar.style.width = '40%';
 
-  const body = {
-    nome, idade, area, conteudo,
-    fileData, fileName
-  };
-
-  try{
-    const res = await fetch(SCRIPT_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(body)
-    });
-    const json = await res.json();
-    if(json.result === 'success'){
-      bar.style.width = '100%';
-      txt.textContent = 'Concluído ✅';
-      msg.textContent = 'Currículo enviado com sucesso!';
+  fetch(SCRIPT_URL,{
+    method:'POST',
+    body:JSON.stringify({
+      nome,idade,area,
+      fileName:file.name,
+      fileData:fileData,
+      mimeType:file.type
+    }),
+    headers:{'Content-Type':'application/json'}
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.result==='success' || res.status==='success'){
+      bar.style.width='100%';
+      txt.textContent='Concluído ✅';
+      msg.textContent='Currículo enviado com sucesso!';
       e.target.reset();
-    } else {
-      msg.textContent = '❌ Erro no envio: ' + json.message;
+    }else{
+      msg.textContent='❌ Erro: '+(res.message||'Falha no envio');
     }
-  }catch(err){
-    msg.textContent = '⚠️ Erro de rede: ' + err.message;
-  }
+  })
+  .catch(err=>{
+    msg.textContent='⚠️ Erro de rede: '+err.message;
+  });
+});
+
+// Popup
+const popup=document.getElementById('popupOverlay');
+document.getElementById('abrirPopup').onclick=()=>popup.style.display='flex';
+document.getElementById('fecharPopup').onclick=()=>popup.style.display='none';
+
+// Geração de PDF
+document.getElementById('gerarPDF').addEventListener('click', ()=>{
+  const nome=document.querySelector('[name="nome"]').value||'Sem Nome';
+  const idade=document.querySelector('[name="idade"]').value||'—';
+  const area=document.querySelector('[name="area"]').value||'—';
+  const resumo=document.getElementById('cvResumo').value||'';
+  const exp=document.getElementById('cvExp').value||'';
+  const formacao=document.getElementById('cvForm').value||'';
+
+  const html=`
+    <div style="font-family:Inter,sans-serif;color:#000;">
+      <h2 style="text-align:center;color:#b8860b;">Currículo</h2>
+      <p><b>Nome:</b> ${nome}</p>
+      <p><b>Idade:</b> ${idade}</p>
+      <p><b>Área de Interesse:</b> ${area}</p>
+      <h3>Resumo Profissional</h3><p>${resumo.replace(/\n/g,'<br>')}</p>
+      <h3>Experiências</h3><p>${exp.replace(/\n/g,'<br>')}</p>
+      <h3>Formação e Cursos</h3><p>${formacao.replace(/\n/g,'<br>')}</p>
+    </div>
+  `;
+  html2pdf().set({
+    margin:10,
+    filename:`${nome.replaceAll(' ','_')}_curriculo.pdf`,
+    html2canvas:{scale:2},
+    jsPDF:{unit:'mm',format:'a4'}
+  }).from(html).save();
+  popup.style.display='none';
 });
 </script>
 </body>
