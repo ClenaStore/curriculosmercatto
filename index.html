@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Banco de Currículos • Grupo DV</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
 :root {
@@ -33,7 +32,6 @@ header {
   font-size:1.8rem;
   font-weight:700;
   box-shadow:var(--shadow);
-  letter-spacing:.3px;
 }
 main {
   max-width:700px;
@@ -42,14 +40,17 @@ main {
   padding:2rem;
   border-radius:var(--radius);
   box-shadow:var(--shadow);
-  animation:fadeIn .6s ease;
 }
 h2 {
   text-align:center;
   color:var(--accent2);
   margin-top:0;
 }
-label {display:block;margin-top:1rem;font-weight:600;}
+label {
+  display:block;
+  margin-top:1rem;
+  font-weight:600;
+}
 input,select,textarea {
   width:100%;
   padding:.9rem;
@@ -59,11 +60,6 @@ input,select,textarea {
   border-radius:var(--radius);
   background:#0f1629;
   color:var(--text);
-}
-input:focus,select:focus,textarea:focus {
-  border-color:var(--accent2);
-  outline:none;
-  box-shadow:0 0 0 2px rgba(255,214,90,.15);
 }
 button {
   width:100%;
@@ -75,19 +71,22 @@ button {
   cursor:pointer;
   font-size:1rem;
   transition:.2s;
-  letter-spacing:.3px;
 }
 #enviar {
   background:var(--accent);
   color:#fff;
-  box-shadow:inset 0 0 0 0 var(--accent2);
 }
 #enviar:hover {
-  box-shadow:inset 400px 0 0 0 var(--accent2);
+  background:var(--accent2);
   color:#000;
 }
-#abrirPopup {background:#2d364b;color:#fff;}
-#abrirPopup:hover {background:#384763;}
+#abrirPopup {
+  background:#2d364b;
+  color:#fff;
+}
+#abrirPopup:hover {
+  background:#384763;
+}
 #msg {
   text-align:center;
   margin-top:1rem;
@@ -100,13 +99,12 @@ button {
   border-radius:10px;
   height:14px;
   width:100%;
-  overflow:hidden;
 }
 .progress-bar {
   height:14px;
   width:0;
   background:linear-gradient(90deg,#b8860b,#ffd65a);
-  transition:width .3s ease;
+  transition:width .3s;
 }
 .progress-text {
   text-align:center;
@@ -114,6 +112,8 @@ button {
   color:var(--muted);
   margin-top:.4rem;
 }
+
+/* Modal */
 #popupOverlay {
   position:fixed;
   inset:0;
@@ -131,7 +131,6 @@ button {
   max-width:500px;
   padding:2rem;
   position:relative;
-  animation:fadeIn .4s ease;
 }
 #popup h3 {
   text-align:center;
@@ -147,14 +146,6 @@ button {
   cursor:pointer;
   color:var(--muted);
 }
-@keyframes fadeIn {
-  from{opacity:0;transform:translateY(10px);}
-  to{opacity:1;transform:translateY(0);}
-}
-@media(max-width:600px){
-  main{margin:1rem;padding:1.5rem;}
-  header{font-size:1.5rem;}
-}
 </style>
 </head>
 
@@ -163,7 +154,7 @@ button {
 
 <main>
   <h2>Cadastre seu currículo</h2>
-  <form id="form-cv">
+  <form id="form-cv" enctype="multipart/form-data" method="POST" action="">
     <label>Nome completo *</label>
     <input type="text" name="nome" required>
 
@@ -181,7 +172,7 @@ button {
     </select>
 
     <label>Anexar currículo (PDF, DOC ou DOCX)</label>
-    <input type="file" name="arquivo" id="arquivo" accept=".pdf,.doc,.docx" required>
+    <input type="file" name="arquivo" accept=".pdf,.doc,.docx" required>
 
     <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
     <div class="progress-text" id="progressText"></div>
@@ -201,77 +192,57 @@ button {
     <h3>📝 Criar Currículo Básico</h3>
 
     <label>Resumo Profissional</label>
-    <textarea id="cvResumo" rows="4" placeholder="Fale brevemente sobre suas habilidades e experiências."></textarea>
+    <textarea id="cvResumo" rows="4"></textarea>
 
     <label>Experiências Profissionais</label>
-    <textarea id="cvExp" rows="4" placeholder="Liste suas experiências anteriores."></textarea>
+    <textarea id="cvExp" rows="4"></textarea>
 
     <label>Formação e Cursos</label>
-    <textarea id="cvForm" rows="3" placeholder="Informe sua formação acadêmica e cursos."></textarea>
+    <textarea id="cvForm" rows="3"></textarea>
 
     <button id="gerarPDF">Gerar e baixar PDF</button>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzaiHfgr3_t3w24ypURzZjIrD4XtAvsrx_d-A54YoCjzNWsamIuisIUYpDVujNKMo3F/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMRYyxgYMfcjbnnHEeXgCSXm0yQLJJbqNWwSpaNEK-fWJJ1_6_Zn6zocSWc9B9sA4G/exec';
 
-// Converte arquivo para Base64
-const toBase64 = file => new Promise((resolve,reject)=>{
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = ()=>resolve(reader.result.split(',')[1]);
-  reader.onerror = error=>reject(error);
-});
-
-document.getElementById('form-cv').addEventListener('submit', async e=>{
+document.getElementById('form-cv').addEventListener('submit', e=>{
   e.preventDefault();
+  const form = e.target;
   const msg = document.getElementById('msg');
   const bar = document.getElementById('progressBar');
   const txt = document.getElementById('progressText');
-  msg.textContent = '';
-  bar.style.width = '0%';
 
-  const nome = e.target.nome.value.trim();
-  const idade = e.target.idade.value.trim();
-  const area = e.target.area.value.trim();
-  const fileInput = document.getElementById('arquivo');
+  const data = new FormData(form);
+  msg.textContent = 'Enviando...';
+  bar.style.width='0%'; txt.textContent='0%';
 
-  if(fileInput.files.length === 0){
-    msg.textContent = 'Selecione um arquivo.';
-    return;
-  }
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', SCRIPT_URL);
 
-  const file = fileInput.files[0];
-  const fileData = await toBase64(file);
-
-  txt.textContent = 'Enviando dados...';
-  bar.style.width = '40%';
-
-  fetch(SCRIPT_URL,{
-    method:'POST',
-    body:JSON.stringify({
-      nome,idade,area,
-      fileName:file.name,
-      fileData:fileData,
-      mimeType:file.type
-    }),
-    headers:{'Content-Type':'application/json'}
-  })
-  .then(r=>r.json())
-  .then(res=>{
-    if(res.result==='success' || res.status==='success'){
-      bar.style.width='100%';
-      txt.textContent='Concluído ✅';
-      msg.textContent='Currículo enviado com sucesso!';
-      e.target.reset();
-    }else{
-      msg.textContent='❌ Erro: '+(res.message||'Falha no envio');
+  xhr.upload.onprogress = evt=>{
+    if(evt.lengthComputable){
+      const pct = (evt.loaded/evt.total)*100;
+      bar.style.width = pct.toFixed(0)+'%';
+      txt.textContent = pct.toFixed(0)+'% enviado';
     }
-  })
-  .catch(err=>{
-    msg.textContent='⚠️ Erro de rede: '+err.message;
-  });
+  };
+
+  xhr.onload = ()=>{
+    if(xhr.status===200){
+      const res = JSON.parse(xhr.responseText);
+      if(res.result==='success'){
+        bar.style.width='100%';
+        txt.textContent='Concluído ✅';
+        msg.textContent='Currículo enviado com sucesso!';
+        form.reset();
+      }else msg.textContent='❌ Erro: '+res.message;
+    }else msg.textContent='⚠️ Falha de conexão.';
+  };
+
+  xhr.onerror = ()=>msg.textContent='⚠️ Erro de rede.';
+  xhr.send(data);
 });
 
 // Popup
@@ -279,7 +250,7 @@ const popup=document.getElementById('popupOverlay');
 document.getElementById('abrirPopup').onclick=()=>popup.style.display='flex';
 document.getElementById('fecharPopup').onclick=()=>popup.style.display='none';
 
-// Geração de PDF
+// PDF
 document.getElementById('gerarPDF').addEventListener('click', ()=>{
   const nome=document.querySelector('[name="nome"]').value||'Sem Nome';
   const idade=document.querySelector('[name="idade"]').value||'—';
@@ -297,8 +268,7 @@ document.getElementById('gerarPDF').addEventListener('click', ()=>{
       <h3>Resumo Profissional</h3><p>${resumo.replace(/\n/g,'<br>')}</p>
       <h3>Experiências</h3><p>${exp.replace(/\n/g,'<br>')}</p>
       <h3>Formação e Cursos</h3><p>${formacao.replace(/\n/g,'<br>')}</p>
-    </div>
-  `;
+    </div>`;
   html2pdf().set({
     margin:10,
     filename:`${nome.replaceAll(' ','_')}_curriculo.pdf`,
