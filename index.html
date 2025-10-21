@@ -1,77 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Cadastro de Currículos • Mercatto Delícia</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Envio de Currículos • Mercatto Delícia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta name="color-scheme" content="light dark" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0b0f19;
-      color: #f8fafc;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
+    :root{
+      --bg:#f3f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e5e7eb;
+      --brand:#2563eb; --brand-2:#1e40af; --accent:#f59e0b;
+      --ok:#16a34a; --danger:#dc2626; --shadow:0 12px 30px rgba(2,6,23,.06);
     }
-    form {
-      background: #151d2f;
-      padding: 30px;
-      border-radius: 16px;
-      max-width: 460px;
-      width: 100%;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#0b0e14; --card:#0f131b; --text:#e5e7eb; --muted:#9ca3af; --line:#1f2937;
+        --shadow:0 12px 30px rgba(0,0,0,.35);
+      }
     }
-    h2 {
-      text-align: center;
-      color: #facc15;
-      margin-bottom: 25px;
+    *{box-sizing:border-box}
+    body{
+      font-family:'Inter',sans-serif; margin:0; padding:0; background:var(--bg); color:var(--text);
+      display:flex; align-items:center; justify-content:center; min-height:100vh;
+      background:radial-gradient(800px 600px at -10% -10%, rgba(37,99,235,.08), transparent 60%),
+                 radial-gradient(800px 600px at 110% -10%, rgba(245,158,11,.08), transparent 60%), var(--bg);
     }
-    label { display: block; margin: 12px 0 4px; font-weight: 600; }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #243043;
-      background: #0f172a;
-      color: #f1f5f9;
-      font-size: 15px;
+    .card{
+      width:100%; max-width:480px; background:var(--card); border-radius:18px; box-shadow:var(--shadow);
+      padding:28px 26px 34px; margin:20px; border:1px solid var(--line);
     }
-    button {
-      background: #facc15;
-      color: #111;
-      border: none;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 14px;
+    h1{text-align:center; color:var(--accent); font-weight:800; margin-bottom:20px}
+    label{font-weight:600; display:block; margin-top:14px; font-size:.94rem}
+    input,select,button{
+      width:100%; padding:12px; border-radius:12px; border:1px solid var(--line);
+      background:transparent; color:inherit; font-size:16px; outline:none; transition:.15s;
     }
-    button:hover { opacity: 0.9; }
-    progress {
-      width: 100%;
-      height: 8px;
-      border-radius: 8px;
-      margin-top: 10px;
-      appearance: none;
+    input:focus,select:focus{border-color:var(--brand); box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+    button{
+      background:linear-gradient(90deg,var(--brand),var(--brand-2)); color:#fff; font-weight:700;
+      border:0; margin-top:20px; cursor:pointer; transition:.25s;
     }
-    progress::-webkit-progress-bar { background: #1e293b; border-radius: 8px; }
-    progress::-webkit-progress-value { background: #facc15; border-radius: 8px; }
-    .msg { text-align: center; margin-top: 10px; font-size: 14px; }
+    button:hover{opacity:.9}
+    .file-box{display:flex; align-items:center; justify-content:space-between; margin-top:10px;
+      border:1px dashed var(--line); border-radius:10px; padding:10px 12px; font-size:.9rem; color:var(--muted);}
+    .file-box span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;}
+    .progress{height:8px; width:100%; border-radius:8px; background:#1e293b; margin-top:10px; overflow:hidden;}
+    .progress span{display:block; height:100%; width:0%; background:var(--accent); transition:width .3s;}
+    .msg{text-align:center; margin-top:12px; font-size:.9rem;}
+    .msg.ok{color:var(--ok)} .msg.err{color:var(--danger)}
   </style>
 </head>
 <body>
-
-  <form id="curriculoForm">
-    <h2>Cadastre seu currículo</h2>
+  <form class="card" id="cvForm">
+    <h1>Cadastre seu Currículo</h1>
 
     <label>Nome completo *</label>
-    <input type="text" id="nome" required>
+    <input type="text" id="nome" required placeholder="Digite seu nome completo" />
 
     <label>Idade *</label>
-    <input type="number" id="idade" required min="14">
+    <input type="number" id="idade" min="14" required placeholder="Sua idade" />
 
     <label>Área de interesse *</label>
     <select id="area" required>
@@ -80,41 +67,60 @@
       <option>Atendimento</option>
       <option>Serviços Gerais</option>
       <option>Administração</option>
+      <option>Auxiliar</option>
+      <option>Financeiro</option>
+      <option>Outros</option>
     </select>
 
-    <label>Anexar currículo (PDF, DOC ou DOCX)</label>
-    <input type="file" id="arquivo" accept=".pdf,.doc,.docx" required>
+    <label>Currículo (PDF, DOC ou DOCX) *</label>
+    <input type="file" id="arquivo" accept=".pdf,.doc,.docx" required />
+    <div class="file-box" id="fileBox" style="display:none;">
+      <span id="fileName">Nenhum arquivo selecionado</span>
+      <button type="button" id="clearFile" style="width:auto;background:var(--danger);padding:8px 10px;border-radius:8px;">Remover</button>
+    </div>
 
-    <progress id="progresso" value="0" max="100" style="display:none;"></progress>
+    <div class="progress" id="progressBar" style="display:none;"><span></span></div>
 
-    <button type="submit">Enviar Currículo</button>
+    <button type="submit">📤 Enviar Currículo</button>
     <div class="msg" id="mensagem"></div>
   </form>
 
   <script>
-    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxyY4rYnv3qK2UWbV7dHl4ABd2NOYAFVHMgz_HQB2RngKu-l_dcr3Xz1v4MpirB3JnW/exec";
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbyFk_V6sLlZbNbnQwZK1nMhtHaxqSDQkq-0eARh67yKZByuQEOGwZLzs_Ir4YkY6okG/exec";
 
-    const form = document.getElementById("curriculoForm");
+    const form = document.getElementById("cvForm");
     const msg = document.getElementById("mensagem");
-    const barra = document.getElementById("progresso");
+    const inputArquivo = document.getElementById("arquivo");
+    const fileBox = document.getElementById("fileBox");
+    const fileName = document.getElementById("fileName");
+    const clearFile = document.getElementById("clearFile");
+    const progress = document.getElementById("progressBar");
+    const bar = progress.querySelector("span");
+
+    inputArquivo.addEventListener("change", () => {
+      const f = inputArquivo.files[0];
+      if (!f) { fileBox.style.display = "none"; return; }
+      fileBox.style.display = "flex";
+      fileName.textContent = f.name + " • " + (f.size/1024/1024).toFixed(2) + " MB";
+    });
+    clearFile.addEventListener("click", () => {
+      inputArquivo.value = "";
+      fileBox.style.display = "none";
+    });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       msg.textContent = "";
-      barra.value = 0;
-      barra.style.display = "block";
+      msg.className = "msg";
+      progress.style.display = "block";
+      bar.style.width = "0%";
 
       const nome = document.getElementById("nome").value.trim();
       const idade = document.getElementById("idade").value.trim();
       const area = document.getElementById("area").value;
-      const file = document.getElementById("arquivo").files[0];
+      const file = inputArquivo.files[0];
+      if (!file) { msg.textContent = "Selecione um arquivo."; msg.classList.add("err"); return; }
 
-      if (!file) {
-        msg.textContent = "Selecione um arquivo válido.";
-        return;
-      }
-
-      // Lê arquivo como base64 com barra de progresso
       const base64 = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result.split(",")[1]);
@@ -122,35 +128,39 @@
         reader.readAsDataURL(file);
         reader.onprogress = (ev) => {
           if (ev.lengthComputable) {
-            barra.value = (ev.loaded / ev.total) * 100;
+            const pct = (ev.loaded / ev.total) * 100;
+            bar.style.width = pct + "%";
           }
         };
       });
 
       msg.textContent = "Enviando dados...";
-
       try {
         const resp = await fetch(ENDPOINT, {
           method: "POST",
           body: JSON.stringify({
-            nome, idade, area,
+            nome,
+            idade,
+            area,
             nomeArquivo: file.name,
             arquivo: base64
           }),
         });
-
         const data = await resp.json();
         if (data.sucesso) {
+          bar.style.width = "100%";
           msg.textContent = "✅ Currículo enviado com sucesso!";
+          msg.classList.add("ok");
           form.reset();
-          barra.value = 100;
+          fileBox.style.display = "none";
+          setTimeout(() => bar.style.display = "none", 1500);
         } else {
           msg.textContent = "⚠️ Erro: " + (data.erro || "Falha ao enviar.");
+          msg.classList.add("err");
         }
       } catch (err) {
         msg.textContent = "⚠️ Erro de rede: " + err.message;
-      } finally {
-        setTimeout(() => (barra.style.display = "none"), 2000);
+        msg.classList.add("err");
       }
     });
   </script>
