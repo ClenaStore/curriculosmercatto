@@ -1,282 +1,158 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Banco de Currículos • Grupo DV</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-<style>
-:root {
-  --bg:#0b0f19;
-  --card:#151d2f;
-  --text:#f8fafc;
-  --muted:#94a3b8;
-  --line:#243043;
-  --accent:#b8860b;
-  --accent2:#ffd65a;
-  --radius:14px;
-  --shadow:0 6px 16px rgba(0,0,0,.35);
-}
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Inter',sans-serif;
-}
-header {
-  background:linear-gradient(135deg,#b8860b,#d4af37);
-  color:#fff;
-  text-align:center;
-  padding:2rem 1rem;
-  font-size:1.8rem;
-  font-weight:700;
-  box-shadow:var(--shadow);
-}
-main {
-  max-width:700px;
-  margin:2rem auto;
-  background:var(--card);
-  padding:2rem;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-}
-h2 {
-  text-align:center;
-  color:var(--accent2);
-  margin-top:0;
-}
-label {
-  display:block;
-  margin-top:1rem;
-  font-weight:600;
-}
-input,select,textarea {
-  width:100%;
-  padding:.9rem;
-  margin-top:.3rem;
-  font-size:1rem;
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  background:#0f1629;
-  color:var(--text);
-}
-button {
-  width:100%;
-  padding:1rem;
-  margin-top:1.2rem;
-  border:none;
-  border-radius:var(--radius);
-  font-weight:600;
-  cursor:pointer;
-  font-size:1rem;
-  transition:.2s;
-}
-#enviar {
-  background:var(--accent);
-  color:#fff;
-}
-#enviar:hover {
-  background:var(--accent2);
-  color:#000;
-}
-#abrirPopup {
-  background:#2d364b;
-  color:#fff;
-}
-#abrirPopup:hover {
-  background:#384763;
-}
-#msg {
-  text-align:center;
-  margin-top:1rem;
-  font-weight:600;
-  color:var(--accent2);
-}
-.progress-container {
-  margin-top:1.2rem;
-  background:#2d364b;
-  border-radius:10px;
-  height:14px;
-  width:100%;
-}
-.progress-bar {
-  height:14px;
-  width:0;
-  background:linear-gradient(90deg,#b8860b,#ffd65a);
-  transition:width .3s;
-}
-.progress-text {
-  text-align:center;
-  font-size:.9rem;
-  color:var(--muted);
-  margin-top:.4rem;
-}
-
-/* Modal */
-#popupOverlay {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-}
-#popup {
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  width:90%;
-  max-width:500px;
-  padding:2rem;
-  position:relative;
-}
-#popup h3 {
-  text-align:center;
-  color:var(--accent2);
-}
-#popup button.close {
-  position:absolute;
-  top:10px;
-  right:15px;
-  background:none;
-  border:none;
-  font-size:1.6rem;
-  cursor:pointer;
-  color:var(--muted);
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Cadastro de Currículos • Mercatto Delícia</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0b0f19;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    form {
+      background: #151d2f;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 460px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+    h2 {
+      text-align: center;
+      color: #facc15;
+      margin-bottom: 25px;
+    }
+    label { display: block; margin: 12px 0 4px; font-weight: 600; }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #243043;
+      background: #0f172a;
+      color: #f1f5f9;
+      font-size: 15px;
+    }
+    button {
+      background: #facc15;
+      color: #111;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 14px;
+    }
+    button:hover { opacity: 0.9; }
+    progress {
+      width: 100%;
+      height: 8px;
+      border-radius: 8px;
+      margin-top: 10px;
+      appearance: none;
+    }
+    progress::-webkit-progress-bar { background: #1e293b; border-radius: 8px; }
+    progress::-webkit-progress-value { background: #facc15; border-radius: 8px; }
+    .msg { text-align: center; margin-top: 10px; font-size: 14px; }
+  </style>
 </head>
-
 <body>
-<header>💼 Banco de Currículos • Grupo DV</header>
 
-<main>
-  <h2>Cadastre seu currículo</h2>
-  <form id="form-cv" enctype="multipart/form-data" method="POST" action="">
+  <form id="curriculoForm">
+    <h2>Cadastre seu currículo</h2>
+
     <label>Nome completo *</label>
-    <input type="text" name="nome" required>
+    <input type="text" id="nome" required>
 
     <label>Idade *</label>
-    <input type="number" name="idade" required min="16" max="100">
+    <input type="number" id="idade" required min="14">
 
     <label>Área de interesse *</label>
-    <select name="area" required>
-      <option value="">Selecione...</option>
-      <option>Atendimento</option>
+    <select id="area" required>
+      <option value="">Selecione</option>
       <option>Cozinha</option>
+      <option>Atendimento</option>
+      <option>Serviços Gerais</option>
       <option>Administração</option>
-      <option>Marketing</option>
-      <option>Limpeza / Serviços Gerais</option>
     </select>
 
     <label>Anexar currículo (PDF, DOC ou DOCX)</label>
-    <input type="file" name="arquivo" accept=".pdf,.doc,.docx" required>
+    <input type="file" id="arquivo" accept=".pdf,.doc,.docx" required>
 
-    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
-    <div class="progress-text" id="progressText"></div>
+    <progress id="progresso" value="0" max="100" style="display:none;"></progress>
 
-    <p style="text-align:center;margin-top:1.2rem;color:var(--muted)">— ou —</p>
-
-    <button type="button" id="abrirPopup">Criar currículo básico</button>
-    <button type="submit" id="enviar">Enviar Currículo</button>
-    <div id="msg"></div>
+    <button type="submit">Enviar Currículo</button>
+    <div class="msg" id="mensagem"></div>
   </form>
-</main>
 
-<!-- Popup -->
-<div id="popupOverlay">
-  <div id="popup">
-    <button class="close" id="fecharPopup">&times;</button>
-    <h3>📝 Criar Currículo Básico</h3>
+  <script>
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxyY4rYnv3qK2UWbV7dHl4ABd2NOYAFVHMgz_HQB2RngKu-l_dcr3Xz1v4MpirB3JnW/exec";
 
-    <label>Resumo Profissional</label>
-    <textarea id="cvResumo" rows="4"></textarea>
+    const form = document.getElementById("curriculoForm");
+    const msg = document.getElementById("mensagem");
+    const barra = document.getElementById("progresso");
 
-    <label>Experiências Profissionais</label>
-    <textarea id="cvExp" rows="4"></textarea>
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.textContent = "";
+      barra.value = 0;
+      barra.style.display = "block";
 
-    <label>Formação e Cursos</label>
-    <textarea id="cvForm" rows="3"></textarea>
+      const nome = document.getElementById("nome").value.trim();
+      const idade = document.getElementById("idade").value.trim();
+      const area = document.getElementById("area").value;
+      const file = document.getElementById("arquivo").files[0];
 
-    <button id="gerarPDF">Gerar e baixar PDF</button>
-  </div>
-</div>
+      if (!file) {
+        msg.textContent = "Selecione um arquivo válido.";
+        return;
+      }
 
-<script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMRYyxgYMfcjbnnHEeXgCSXm0yQLJJbqNWwSpaNEK-fWJJ1_6_Zn6zocSWc9B9sA4G/exec';
+      // Lê arquivo como base64 com barra de progresso
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+        reader.onprogress = (ev) => {
+          if (ev.lengthComputable) {
+            barra.value = (ev.loaded / ev.total) * 100;
+          }
+        };
+      });
 
-document.getElementById('form-cv').addEventListener('submit', e=>{
-  e.preventDefault();
-  const form = e.target;
-  const msg = document.getElementById('msg');
-  const bar = document.getElementById('progressBar');
-  const txt = document.getElementById('progressText');
+      msg.textContent = "Enviando dados...";
 
-  const data = new FormData(form);
-  msg.textContent = 'Enviando...';
-  bar.style.width='0%'; txt.textContent='0%';
+      try {
+        const resp = await fetch(ENDPOINT, {
+          method: "POST",
+          body: JSON.stringify({
+            nome, idade, area,
+            nomeArquivo: file.name,
+            arquivo: base64
+          }),
+        });
 
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', SCRIPT_URL);
-
-  xhr.upload.onprogress = evt=>{
-    if(evt.lengthComputable){
-      const pct = (evt.loaded/evt.total)*100;
-      bar.style.width = pct.toFixed(0)+'%';
-      txt.textContent = pct.toFixed(0)+'% enviado';
-    }
-  };
-
-  xhr.onload = ()=>{
-    if(xhr.status===200){
-      const res = JSON.parse(xhr.responseText);
-      if(res.result==='success'){
-        bar.style.width='100%';
-        txt.textContent='Concluído ✅';
-        msg.textContent='Currículo enviado com sucesso!';
-        form.reset();
-      }else msg.textContent='❌ Erro: '+res.message;
-    }else msg.textContent='⚠️ Falha de conexão.';
-  };
-
-  xhr.onerror = ()=>msg.textContent='⚠️ Erro de rede.';
-  xhr.send(data);
-});
-
-// Popup
-const popup=document.getElementById('popupOverlay');
-document.getElementById('abrirPopup').onclick=()=>popup.style.display='flex';
-document.getElementById('fecharPopup').onclick=()=>popup.style.display='none';
-
-// PDF
-document.getElementById('gerarPDF').addEventListener('click', ()=>{
-  const nome=document.querySelector('[name="nome"]').value||'Sem Nome';
-  const idade=document.querySelector('[name="idade"]').value||'—';
-  const area=document.querySelector('[name="area"]').value||'—';
-  const resumo=document.getElementById('cvResumo').value||'';
-  const exp=document.getElementById('cvExp').value||'';
-  const formacao=document.getElementById('cvForm').value||'';
-
-  const html=`
-    <div style="font-family:Inter,sans-serif;color:#000;">
-      <h2 style="text-align:center;color:#b8860b;">Currículo</h2>
-      <p><b>Nome:</b> ${nome}</p>
-      <p><b>Idade:</b> ${idade}</p>
-      <p><b>Área de Interesse:</b> ${area}</p>
-      <h3>Resumo Profissional</h3><p>${resumo.replace(/\n/g,'<br>')}</p>
-      <h3>Experiências</h3><p>${exp.replace(/\n/g,'<br>')}</p>
-      <h3>Formação e Cursos</h3><p>${formacao.replace(/\n/g,'<br>')}</p>
-    </div>`;
-  html2pdf().set({
-    margin:10,
-    filename:`${nome.replaceAll(' ','_')}_curriculo.pdf`,
-    html2canvas:{scale:2},
-    jsPDF:{unit:'mm',format:'a4'}
-  }).from(html).save();
-  popup.style.display='none';
-});
-</script>
+        const data = await resp.json();
+        if (data.sucesso) {
+          msg.textContent = "✅ Currículo enviado com sucesso!";
+          form.reset();
+          barra.value = 100;
+        } else {
+          msg.textContent = "⚠️ Erro: " + (data.erro || "Falha ao enviar.");
+        }
+      } catch (err) {
+        msg.textContent = "⚠️ Erro de rede: " + err.message;
+      } finally {
+        setTimeout(() => (barra.style.display = "none"), 2000);
+      }
+    });
+  </script>
 </body>
 </html>
