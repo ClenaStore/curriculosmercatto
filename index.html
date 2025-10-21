@@ -13,8 +13,7 @@
   --accent:#2563eb;--accent-dark:#1e40af;--radius:14px;
   --shadow:0 6px 16px rgba(15,23,42,.08);
 }
-*{box-sizing:border-box;font-family:'Inter',sans-serif;}
-body{background:var(--bg);margin:0;color:var(--text);}
+body{background:var(--bg);margin:0;font-family:'Inter',sans-serif;color:var(--text);}
 header{
   background:linear-gradient(135deg,#2563eb,#1e40af);
   color:white;text-align:center;padding:2rem;
@@ -29,9 +28,6 @@ input,select,textarea{
   width:100%;padding:.8rem;margin-top:.3rem;font-size:1rem;
   border:1px solid var(--line);border-radius:var(--radius);
 }
-input:focus,select:focus,textarea:focus{
-  border-color:var(--accent);outline:none;
-}
 button{
   width:100%;padding:1rem;font-size:1rem;font-weight:600;
   border:none;border-radius:var(--radius);cursor:pointer;margin-top:1rem;
@@ -44,10 +40,11 @@ button{
 #msg{text-align:center;margin-top:1rem;font-weight:600;}
 
 /* Barra de progresso */
-.progress-container{margin-top:1rem;background:#e5e7eb;border-radius:10px;height:12px;width:100%;overflow:hidden;}
-.progress-bar{height:12px;width:0;background:var(--accent);transition:width .3s;}
+.progress-container{margin-top:1rem;background:#e5e7eb;border-radius:10px;height:14px;width:100%;overflow:hidden;}
+.progress-bar{height:14px;width:0;background:var(--accent);transition:width .2s;}
+.progress-text{text-align:center;font-size:.9rem;color:var(--muted);margin-top:.3rem;}
 
-/* Modal de criação de currículo */
+/* Modal */
 #popupOverlay{
   position:fixed;inset:0;background:rgba(0,0,0,.6);
   display:none;align-items:center;justify-content:center;z-index:1000;
@@ -56,7 +53,7 @@ button{
   background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
   width:90%;max-width:500px;padding:2rem;position:relative;
 }
-#popup h3{margin-top:0;text-align:center;}
+#popup h3{text-align:center;margin-top:0;}
 #popup button.close{
   position:absolute;top:10px;right:15px;background:none;border:none;
   font-size:1.5rem;cursor:pointer;color:var(--muted);
@@ -92,6 +89,7 @@ button{
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
     </div>
+    <div class="progress-text" id="progressText"></div>
 
     <p style="text-align:center;margin-top:1.2rem;color:var(--muted)">— ou —</p>
 
@@ -101,95 +99,102 @@ button{
   </form>
 </main>
 
-<!-- Popup criação de currículo -->
+<!-- Popup -->
 <div id="popupOverlay">
   <div id="popup">
     <button class="close" id="fecharPopup">&times;</button>
     <h3>📝 Criar Currículo Básico</h3>
-    <label>Resumo Profissional</label>
-    <textarea id="cvResumo" rows="5" placeholder="Fale sobre você..."></textarea>
 
-    <label>Experiências Profissionais</label>
-    <textarea id="cvExperiencias" rows="5" placeholder="Liste seus empregos anteriores..."></textarea>
+    <label>Resumo Profissional</label>
+    <textarea id="cvResumo" rows="4"></textarea>
+
+    <label>Experiências</label>
+    <textarea id="cvExp" rows="4"></textarea>
 
     <label>Formação e Cursos</label>
-    <textarea id="cvFormacao" rows="4" placeholder="Escreva sua formação..."></textarea>
+    <textarea id="cvForm" rows="3"></textarea>
 
     <button id="gerarPDF">Gerar e baixar PDF</button>
   </div>
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXG5G7MEUGYc-krms6BwjjpvMNNi9wiflmS_KLyaJNBgceU1C9X5U-srfmqq_GlHHS/exec'; // substitua
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXG5G7MEUGYc-krms6BwjjpvMNNi9wiflmS_KLyaJNBgceU1C9X5U-srfmqq_GlHHS/exec';
 
-// ==== UPLOAD COM BARRA DE PROGRESSO ====
+// Envio com progresso
 document.getElementById('form-cv').addEventListener('submit', e=>{
   e.preventDefault();
   const form = e.target;
   const data = new FormData(form);
   const msg = document.getElementById('msg');
   const bar = document.getElementById('progressBar');
-  msg.textContent = 'Enviando... ⏳';
+  const txt = document.getElementById('progressText');
+
+  msg.textContent = 'Enviando...';
   bar.style.width = '0%';
+  txt.textContent = '';
 
   const xhr = new XMLHttpRequest();
   xhr.open('POST', SCRIPT_URL);
+
   xhr.upload.onprogress = evt=>{
     if(evt.lengthComputable){
       const percent = (evt.loaded / evt.total) * 100;
       bar.style.width = percent.toFixed(0) + '%';
+      txt.textContent = percent.toFixed(0) + '% enviado';
     }
   };
+
   xhr.onload = ()=>{
     if(xhr.status === 200){
-      const json = JSON.parse(xhr.responseText);
-      if(json.result === 'success'){
-        msg.textContent = '✅ Currículo enviado com sucesso!';
+      const res = JSON.parse(xhr.responseText);
+      if(res.result === 'success'){
+        bar.style.width = '100%';
+        txt.textContent = 'Concluído ✅';
+        msg.textContent = 'Currículo enviado com sucesso!';
         form.reset();
-      } else msg.textContent = '❌ Erro ao enviar.';
-    } else msg.textContent = '⚠️ Falha na conexão.';
+      } else {
+        msg.textContent = 'Erro no envio ❌';
+      }
+    } else msg.textContent = 'Falha de conexão ⚠️';
   };
-  xhr.onerror = ()=> msg.textContent = '⚠️ Erro de rede.';
+
+  xhr.onerror = ()=> msg.textContent = 'Erro de rede ⚠️';
   xhr.send(data);
 });
 
-// ==== POPUP DE CRIAÇÃO DE CURRÍCULO ====
-const popupOverlay = document.getElementById('popupOverlay');
-document.getElementById('abrirPopup').onclick = ()=> popupOverlay.style.display='flex';
-document.getElementById('fecharPopup').onclick = ()=> popupOverlay.style.display='none';
+// Popup
+const popup = document.getElementById('popupOverlay');
+document.getElementById('abrirPopup').onclick=()=>popup.style.display='flex';
+document.getElementById('fecharPopup').onclick=()=>popup.style.display='none';
 
-// ==== GERAÇÃO DE PDF ====
+// Geração de PDF
 document.getElementById('gerarPDF').addEventListener('click', ()=>{
-  const nome = document.querySelector('[name="nome"]').value || 'Sem Nome';
-  const idade = document.querySelector('[name="idade"]').value || '—';
-  const area = document.querySelector('[name="area"]').value || '—';
-  const resumo = document.getElementById('cvResumo').value || '';
-  const exp = document.getElementById('cvExperiencias').value || '';
-  const formacao = document.getElementById('cvFormacao').value || '';
+  const nome=document.querySelector('[name="nome"]').value||'Sem Nome';
+  const idade=document.querySelector('[name="idade"]').value||'—';
+  const area=document.querySelector('[name="area"]').value||'—';
+  const resumo=document.getElementById('cvResumo').value||'';
+  const exp=document.getElementById('cvExp').value||'';
+  const formacao=document.getElementById('cvForm').value||'';
 
-  const modelo = `
+  const html=`
     <div style="font-family:Inter,sans-serif;">
-      <h2 style="text-align:center;">Currículo</h2>
+      <h2 style="text-align:center">Currículo</h2>
       <p><b>Nome:</b> ${nome}</p>
       <p><b>Idade:</b> ${idade}</p>
       <p><b>Área de Interesse:</b> ${area}</p>
-      <h3>Resumo Profissional</h3>
-      <p>${resumo.replace(/\n/g,'<br>')}</p>
-      <h3>Experiências</h3>
-      <p>${exp.replace(/\n/g,'<br>')}</p>
-      <h3>Formação e Cursos</h3>
-      <p>${formacao.replace(/\n/g,'<br>')}</p>
+      <h3>Resumo Profissional</h3><p>${resumo.replace(/\n/g,'<br>')}</p>
+      <h3>Experiências</h3><p>${exp.replace(/\n/g,'<br>')}</p>
+      <h3>Formação e Cursos</h3><p>${formacao.replace(/\n/g,'<br>')}</p>
     </div>
   `;
-
   html2pdf().set({
     margin:10,
     filename:`${nome.replaceAll(' ','_')}_curriculo.pdf`,
     html2canvas:{scale:2},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-  }).from(modelo).save();
-
-  popupOverlay.style.display='none';
+    jsPDF:{unit:'mm',format:'a4'}
+  }).from(html).save();
+  popup.style.display='none';
 });
 </script>
 </body>
