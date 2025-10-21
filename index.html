@@ -29,17 +29,17 @@
       width:100%; max-width:480px; background:var(--card); border-radius:18px; box-shadow:var(--shadow);
       padding:28px 26px 34px; margin:20px; border:1px solid var(--line);
     }
-    /* Corrige cor do select e opções */
-select {
-  background-color: var(--card);
-  color: var(--text);
-  border: 1px solid var(--line);
-}
 
-select option {
-  background-color: var(--card);
-  color: var(--text);
-}
+    /* Corrige cor do select e opções */
+    select {
+      background-color: var(--card);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    select option {
+      background-color: var(--card);
+      color: var(--text);
+    }
 
     h1{text-align:center; color:var(--accent); font-weight:800; margin-bottom:20px}
     label{font-weight:600; display:block; margin-top:14px; font-size:.94rem}
@@ -77,12 +77,18 @@ select option {
       <option value="">Selecione</option>
       <option>Cozinha</option>
       <option>Atendimento</option>
-      <option>Serviços Gerais</option>
+      <option>Garçom</option>
       <option>Administração</option>
       <option>Auxiliar</option>
       <option>Financeiro</option>
       <option>Outros</option>
     </select>
+
+    <!-- Campo adicional escondido -->
+    <div id="outrosBox" style="display:none;">
+      <label>Especifique a função</label>
+      <input type="text" id="funcaoOutros" placeholder="Digite a função desejada" />
+    </div>
 
     <label>Currículo (PDF, DOC ou DOCX) *</label>
     <input type="file" id="arquivo" accept=".pdf,.doc,.docx" required />
@@ -108,7 +114,23 @@ select option {
     const clearFile = document.getElementById("clearFile");
     const progress = document.getElementById("progressBar");
     const bar = progress.querySelector("span");
+    const areaSelect = document.getElementById("area");
+    const outrosBox = document.getElementById("outrosBox");
+    const funcaoOutros = document.getElementById("funcaoOutros");
 
+    // Mostrar campo "Outros"
+    areaSelect.addEventListener("change", () => {
+      if (areaSelect.value === "Outros") {
+        outrosBox.style.display = "block";
+        funcaoOutros.required = true;
+      } else {
+        outrosBox.style.display = "none";
+        funcaoOutros.required = false;
+        funcaoOutros.value = "";
+      }
+    });
+
+    // Exibir nome do arquivo
     inputArquivo.addEventListener("change", () => {
       const f = inputArquivo.files[0];
       if (!f) { fileBox.style.display = "none"; return; }
@@ -120,6 +142,7 @@ select option {
       fileBox.style.display = "none";
     });
 
+    // Envio
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       msg.textContent = "";
@@ -129,8 +152,14 @@ select option {
 
       const nome = document.getElementById("nome").value.trim();
       const idade = document.getElementById("idade").value.trim();
-      const area = document.getElementById("area").value;
+      let area = document.getElementById("area").value;
       const file = inputArquivo.files[0];
+
+      // Se for "Outros", usar o texto digitado
+      if (area === "Outros" && funcaoOutros.value.trim()) {
+        area = "Outros - " + funcaoOutros.value.trim();
+      }
+
       if (!file) { msg.textContent = "Selecione um arquivo."; msg.classList.add("err"); return; }
 
       const base64 = await new Promise((resolve, reject) => {
@@ -165,7 +194,8 @@ select option {
           msg.classList.add("ok");
           form.reset();
           fileBox.style.display = "none";
-          setTimeout(() => bar.style.display = "none", 1500);
+          outrosBox.style.display = "none";
+          setTimeout(() => progress.style.display = "none", 1500);
         } else {
           msg.textContent = "⚠️ Erro: " + (data.erro || "Falha ao enviar.");
           msg.classList.add("err");
