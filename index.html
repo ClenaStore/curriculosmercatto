@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <meta name="color-scheme" content="light dark" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     :root{
       --bg:#f3f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e5e7eb;
@@ -48,6 +50,28 @@
     .progress span{display:block; height:100%; width:0%; background:var(--accent); transition:width .3s;}
     .msg{text-align:center; margin-top:12px; font-size:.9rem;}
     .msg.ok{color:var(--ok)} .msg.err{color:var(--danger)}
+
+    /* botão de criação */
+    .create-btn{
+      background:linear-gradient(90deg,var(--accent),#facc15);
+      color:#000; font-weight:700; border:0; margin-top:26px; cursor:pointer;
+      border-radius:12px; padding:12px; font-size:16px; box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+    .create-btn:hover{filter:brightness(1.1);}
+    /* popup de criação */
+    .popup-bg{
+      position:fixed;inset:0;background:rgba(0,0,0,.7);
+      display:flex;align-items:center;justify-content:center;z-index:1000;
+      backdrop-filter:blur(3px);
+    }
+    .popup{
+      background:#fff;border-radius:12px;padding:20px;max-width:95%;width:480px;
+      max-height:90vh;overflow:auto;box-shadow:0 4px 20px rgba(0,0,0,.4);
+    }
+    .popup h2{text-align:center;margin-bottom:10px;color:var(--accent);}
+    .popup label{font-weight:600;margin-top:10px;display:block;}
+    .popup input,.popup textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;}
+    .popup button{margin-top:16px;}
   </style>
 </head>
 <body>
@@ -83,8 +107,29 @@
 
     <button type="submit">📤 Enviar Currículo</button>
     <div class="msg" id="mensagem"></div>
+
+    <button type="button" class="create-btn" id="openBuilder">✍️ Criar Currículo</button>
   </form>
 
+  <!-- POPUP DE CRIAÇÃO -->
+  <div class="popup-bg" id="builderPopup" style="display:none;">
+    <div class="popup">
+      <h2>Monte seu Currículo</h2>
+      <label>Nome completo *</label><input id="bNome">
+      <label>Cargo / Ocupação</label><input id="bCargo">
+      <label>Email</label><input id="bEmail">
+      <label>Telefone</label><input id="bTel">
+      <label>Objetivo</label><textarea id="bObjetivo" rows="2"></textarea>
+      <label>Experiências</label><textarea id="bExp" rows="3"></textarea>
+      <label>Habilidades</label><input id="bHab">
+      <label>Educação</label><textarea id="bEdu" rows="2"></textarea>
+      <button class="create-btn" id="baixarCurriculo">⬇️ Baixar Currículo (PDF)</button>
+      <button style="background:#1e293b;color:#fff" onclick="fecharPopup()">Fechar</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbyFk_V6sLlZbNbnQwZK1nMhtHaxqSDQkq-0eARh67yKZByuQEOGwZLzs_Ir4YkY6okG/exec";
 
@@ -138,13 +183,7 @@
       try {
         const resp = await fetch(ENDPOINT, {
           method: "POST",
-          body: JSON.stringify({
-            nome,
-            idade,
-            area,
-            nomeArquivo: file.name,
-            arquivo: base64
-          }),
+          body: JSON.stringify({nome, idade, area, nomeArquivo: file.name, arquivo: base64}),
         });
         const data = await resp.json();
         if (data.sucesso) {
@@ -153,7 +192,7 @@
           msg.classList.add("ok");
           form.reset();
           fileBox.style.display = "none";
-          setTimeout(() => bar.style.display = "none", 1500);
+          setTimeout(() => progress.style.display = "none", 1500);
         } else {
           msg.textContent = "⚠️ Erro: " + (data.erro || "Falha ao enviar.");
           msg.classList.add("err");
@@ -162,6 +201,39 @@
         msg.textContent = "⚠️ Erro de rede: " + err.message;
         msg.classList.add("err");
       }
+    });
+
+    // Criador de currículo
+    document.getElementById("openBuilder").addEventListener("click",()=>document.getElementById("builderPopup").style.display='flex');
+    function fecharPopup(){document.getElementById("builderPopup").style.display='none';}
+
+    document.getElementById("baixarCurriculo").addEventListener("click",async()=>{
+      const nome=bNome.value.trim()||'Currículo';
+      const doc=document.createElement('div');
+      doc.style.width='800px';
+      doc.style.background='#fff';
+      doc.style.padding='30px';
+      doc.style.fontFamily='Inter';
+      doc.innerHTML=`
+        <h1 style="color:#ff8f1f;margin:0;">${bNome.value}</h1>
+        ${bCargo.value?`<h3 style="margin:4px 0 12px;">${bCargo.value}</h3>`:''}
+        ${bEmail.value?`<p>${bEmail.value}</p>`:''}
+        ${bTel.value?`<p>${bTel.value}</p>`:''}
+        ${bObjetivo.value?`<h4>Objetivo</h4><p>${bObjetivo.value}</p>`:''}
+        ${bExp.value?`<h4>Experiência</h4><p>${bExp.value.replace(/\n/g,'<br>')}</p>`:''}
+        ${bHab.value?`<h4>Habilidades</h4><ul>${bHab.value.split(',').map(h=>`<li>${h.trim()}</li>`).join('')}</ul>`:''}
+        ${bEdu.value?`<h4>Educação</h4><p>${bEdu.value.replace(/\n/g,'<br>')}</p>`:''}
+      `;
+      document.body.appendChild(doc);
+      const { jsPDF } = window.jspdf;
+      const canvas=await html2canvas(doc,{scale:2});
+      const img=canvas.toDataURL('image/png');
+      const pdf=new jsPDF('p','mm','a4');
+      const w=pdf.internal.pageSize.getWidth();
+      const h=(canvas.height*w)/canvas.width;
+      pdf.addImage(img,'PNG',0,0,w,h);
+      pdf.save(nome+'.pdf');
+      doc.remove();
     });
   </script>
 </body>
