@@ -2,61 +2,88 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Banco de Currículos • Grupo DV</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banco de Currículos • Grupo DV</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
-:root{
-  --bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;
-  --accent:#2563eb;--accent-dark:#1e40af;--radius:14px;
-  --shadow:0 6px 16px rgba(15,23,42,.08);
+:root {
+  --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--muted:#94a3b8;
+  --line:#243043;--accent:#b8860b;--accent2:#ffd65a;
+  --radius:14px;--shadow:0 6px 16px rgba(0,0,0,.35);
 }
-body{background:var(--bg);margin:0;font-family:'Inter',sans-serif;color:var(--text);}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:'Inter',sans-serif;
+}
 header{
-  background:linear-gradient(135deg,#2563eb,#1e40af);
-  color:white;text-align:center;padding:2rem;
+  background:linear-gradient(135deg,#b8860b,#d4af37);
+  color:#fff;text-align:center;padding:2rem 1rem;
   font-size:1.8rem;font-weight:700;box-shadow:var(--shadow);
+  letter-spacing:.5px;
 }
 main{
   max-width:700px;margin:2rem auto;background:var(--card);
   padding:2rem;border-radius:var(--radius);box-shadow:var(--shadow);
 }
+h2{text-align:center;margin-top:0;color:var(--accent2);}
 label{display:block;margin-top:1rem;font-weight:600;}
 input,select,textarea{
-  width:100%;padding:.8rem;margin-top:.3rem;font-size:1rem;
+  width:100%;padding:.9rem;margin-top:.3rem;font-size:1rem;
   border:1px solid var(--line);border-radius:var(--radius);
+  background:#0f1629;color:var(--text);
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--accent2);outline:none;
 }
 button{
-  width:100%;padding:1rem;font-size:1rem;font-weight:600;
-  border:none;border-radius:var(--radius);cursor:pointer;margin-top:1rem;
-  transition:.2s;
+  width:100%;padding:1rem;margin-top:1.2rem;
+  border:none;border-radius:var(--radius);
+  font-weight:600;cursor:pointer;font-size:1rem;
+  transition:.2s;letter-spacing:.3px;
 }
-#enviar{background:var(--accent);color:white;}
-#enviar:hover{background:var(--accent-dark);}
-#abrirPopup{background:var(--muted);color:white;}
-#abrirPopup:hover{background:#475569;}
-#msg{text-align:center;margin-top:1rem;font-weight:600;}
+#enviar{background:var(--accent);color:#fff;}
+#enviar:hover{background:var(--accent2);color:#000;}
+#abrirPopup{background:#2d364b;color:#fff;}
+#abrirPopup:hover{background:#384763;}
+#msg{text-align:center;margin-top:1rem;font-weight:600;color:var(--accent2);}
 
 /* Barra de progresso */
-.progress-container{margin-top:1rem;background:#e5e7eb;border-radius:10px;height:14px;width:100%;overflow:hidden;}
-.progress-bar{height:14px;width:0;background:var(--accent);transition:width .2s;}
-.progress-text{text-align:center;font-size:.9rem;color:var(--muted);margin-top:.3rem;}
+.progress-container{
+  margin-top:1.2rem;background:#2d364b;border-radius:10px;
+  height:14px;width:100%;overflow:hidden;
+}
+.progress-bar{
+  height:14px;width:0;background:linear-gradient(90deg,#b8860b,#ffd65a);
+  transition:width .2s ease-in-out;
+}
+.progress-text{text-align:center;font-size:.9rem;color:var(--muted);margin-top:.4rem;}
 
-/* Modal */
+/* Popup */
 #popupOverlay{
   position:fixed;inset:0;background:rgba(0,0,0,.6);
   display:none;align-items:center;justify-content:center;z-index:1000;
 }
 #popup{
-  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-  width:90%;max-width:500px;padding:2rem;position:relative;
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--shadow);width:90%;max-width:500px;
+  padding:2rem;position:relative;animation:fadeIn .3s ease;
 }
-#popup h3{text-align:center;margin-top:0;}
+#popup h3{text-align:center;color:var(--accent2);margin-top:0;}
 #popup button.close{
-  position:absolute;top:10px;right:15px;background:none;border:none;
-  font-size:1.5rem;cursor:pointer;color:var(--muted);
+  position:absolute;top:10px;right:15px;background:none;
+  border:none;font-size:1.6rem;cursor:pointer;color:var(--muted);
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(.9);}
+  to{opacity:1;transform:scale(1);}
+}
+
+/* Responsivo */
+@media(max-width:600px){
+  main{margin:1rem;padding:1.5rem;}
+  header{font-size:1.5rem;}
 }
 </style>
 </head>
@@ -86,7 +113,9 @@ button{
     <label>Anexar currículo (PDF, DOC ou DOCX)</label>
     <input type="file" name="arquivo" accept=".pdf,.doc,.docx">
 
-    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
     <div class="progress-text" id="progressText"></div>
 
     <p style="text-align:center;margin-top:1.2rem;color:var(--muted)">— ou —</p>
@@ -104,22 +133,23 @@ button{
     <h3>📝 Criar Currículo Básico</h3>
 
     <label>Resumo Profissional</label>
-    <textarea id="cvResumo" rows="4"></textarea>
+    <textarea id="cvResumo" rows="4" placeholder="Fale sobre suas habilidades e experiências..."></textarea>
 
-    <label>Experiências</label>
-    <textarea id="cvExp" rows="4"></textarea>
+    <label>Experiências Profissionais</label>
+    <textarea id="cvExp" rows="4" placeholder="Liste suas experiências anteriores..."></textarea>
 
     <label>Formação e Cursos</label>
-    <textarea id="cvForm" rows="3"></textarea>
+    <textarea id="cvForm" rows="3" placeholder="Informe sua formação acadêmica e cursos..."></textarea>
 
     <button id="gerarPDF">Gerar e baixar PDF</button>
   </div>
 </div>
 
 <script>
+// 🔗 Seu endpoint publicado do Google Apps Script:
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwUZl5xcVXz-cnyl3A46L16LdRixiFJ7YyuyjosStsHZ6FWv9yoyNfZbuEboArtce0y/exec';
 
-// Envio com progresso
+// Envio com barra de progresso
 document.getElementById('form-cv').addEventListener('submit', e=>{
   e.preventDefault();
   const form = e.target;
@@ -152,12 +182,14 @@ document.getElementById('form-cv').addEventListener('submit', e=>{
         msg.textContent = 'Currículo enviado com sucesso!';
         form.reset();
       } else {
-        msg.textContent = 'Erro no envio ❌';
+        msg.textContent = '❌ Erro ao enviar.';
       }
-    } else msg.textContent = 'Falha de conexão ⚠️';
+    } else {
+      msg.textContent = '⚠️ Falha na conexão.';
+    }
   };
 
-  xhr.onerror = ()=> msg.textContent = 'Erro de rede ⚠️';
+  xhr.onerror = ()=> msg.textContent = '⚠️ Erro de rede.';
   xhr.send(data);
 });
 
@@ -166,7 +198,7 @@ const popup = document.getElementById('popupOverlay');
 document.getElementById('abrirPopup').onclick=()=>popup.style.display='flex';
 document.getElementById('fecharPopup').onclick=()=>popup.style.display='none';
 
-// Geração de PDF
+// Gerar PDF
 document.getElementById('gerarPDF').addEventListener('click', ()=>{
   const nome=document.querySelector('[name="nome"]').value||'Sem Nome';
   const idade=document.querySelector('[name="idade"]').value||'—';
@@ -176,8 +208,8 @@ document.getElementById('gerarPDF').addEventListener('click', ()=>{
   const formacao=document.getElementById('cvForm').value||'';
 
   const html=`
-    <div style="font-family:Inter,sans-serif;">
-      <h2 style="text-align:center">Currículo</h2>
+    <div style="font-family:Inter,sans-serif;color:#000;">
+      <h2 style="text-align:center;color:#b8860b;">Currículo</h2>
       <p><b>Nome:</b> ${nome}</p>
       <p><b>Idade:</b> ${idade}</p>
       <p><b>Área de Interesse:</b> ${area}</p>
