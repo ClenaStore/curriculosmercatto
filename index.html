@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Banco de Currículos • Grupo DV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+:root{
+  --bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;
+  --accent:#2563eb;--accent-dark:#1e40af;
+  --radius:14px;--shadow:0 6px 16px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:var(--bg);margin:0;color:var(--text);}
+header{
+  background:linear-gradient(135deg,#2563eb,#1e40af);
+  color:white;text-align:center;padding:2rem;
+  font-size:1.8rem;font-weight:700;box-shadow:var(--shadow);
+}
+main{
+  max-width:700px;margin:2rem auto;background:var(--card);
+  padding:2rem;border-radius:var(--radius);box-shadow:var(--shadow);
+}
+label{display:block;margin-top:1rem;font-weight:600;}
+input,select,textarea{
+  width:100%;padding:.8rem;margin-top:.3rem;font-size:1rem;
+  border:1px solid var(--line);border-radius:var(--radius);
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--accent);outline:none;
+}
+button{
+  width:100%;padding:1rem;font-size:1rem;font-weight:600;
+  border:none;border-radius:var(--radius);cursor:pointer;margin-top:1rem;
+  transition:.2s;
+}
+#enviar{background:var(--accent);color:white;}
+#enviar:hover{background:var(--accent-dark);}
+#gerarPDF{background:var(--muted);color:white;}
+#gerarPDF:hover{background:#475569;}
+#msg{text-align:center;margin-top:1rem;font-weight:600;}
+</style>
+</head>
+
+<body>
+<header>💼 Banco de Currículos • Grupo DV</header>
+
+<main>
+  <h2>Cadastre seu currículo</h2>
+  <form id="form-cv">
+    <label>Nome completo *</label>
+    <input type="text" name="nome" required>
+
+    <label>Idade *</label>
+    <input type="number" name="idade" required min="16" max="100">
+
+    <label>Área de interesse *</label>
+    <select name="area" required>
+      <option value="">Selecione...</option>
+      <option>Atendimento</option>
+      <option>Cozinha</option>
+      <option>Administração</option>
+      <option>Marketing</option>
+      <option>Limpeza / Serviços Gerais</option>
+    </select>
+
+    <label>Anexar currículo (PDF, DOC ou DOCX)</label>
+    <input type="file" name="arquivo" accept=".pdf,.doc,.docx">
+
+    <p style="text-align:center;margin-top:1.2rem;color:var(--muted)">— ou —</p>
+
+    <label>Crie seu currículo básico</label>
+    <textarea name="conteudo" rows="6" placeholder="Experiências, habilidades e formação..."></textarea>
+    <button type="button" id="gerarPDF">Gerar e baixar PDF</button>
+
+    <button type="submit" id="enviar">Enviar Currículo</button>
+    <div id="msg"></div>
+  </form>
+</main>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWjVt9pL03HUtByspEua2bs3rv_A2zGpaLRyUyg9ZD0by-fEvVx0_mzyg6CRJIkDmd/exec'; // substitua
+
+document.getElementById('form-cv').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  const msg = document.getElementById('msg');
+  msg.textContent = 'Enviando... ⏳';
+
+  try{
+    const res = await fetch(SCRIPT_URL, {method:'POST', body:data});
+    const json = await res.json();
+    if(json.result === 'success'){
+      msg.textContent = '✅ Currículo enviado com sucesso!';
+      form.reset();
+    }else{
+      msg.textContent = '❌ Erro ao enviar. Tente novamente.';
+    }
+  }catch(err){
+    msg.textContent = '⚠️ Falha de conexão.';
+  }
+});
+
+document.getElementById('gerarPDF').addEventListener('click', ()=>{
+  const nome = document.querySelector('[name="nome"]').value || 'Sem Nome';
+  const idade = document.querySelector('[name="idade"]').value || '—';
+  const area = document.querySelector('[name="area"]').value || '—';
+  const conteudo = document.querySelector('[name="conteudo"]').value || '—';
+  const modelo = `
+    <h2 style="text-align:center">Currículo</h2>
+    <p><b>Nome:</b> ${nome}</p>
+    <p><b>Idade:</b> ${idade}</p>
+    <p><b>Área de Interesse:</b> ${area}</p>
+    <p><b>Resumo:</b><br>${conteudo.replace(/\n/g,'<br>')}</p>
+  `;
+  html2pdf().set({
+    margin:10,
+    filename:`${nome.replaceAll(' ','_')}_curriculo.pdf`,
+    html2canvas:{scale:2},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(modelo).save();
+});
+</script>
+</body>
+</html>
